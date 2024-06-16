@@ -70,32 +70,29 @@ class CatalogueController extends Controller
     public function update(Request $request, string $id)
     {
         $model = Catalogue::query()->findOrFail($id);
-
         $data = $request->except('cover'); // Lấy tất cả giá trị trừ cover
         $data['is_active'] ??= 0;
-
         //check xem đã gửi file chưa
         if ($request->hasFile('cover')) {
+            if ($model->cover && Storage::exists($model->cover)) {
+                Storage::delete($model->cover);
+            }
             $data['cover'] = Storage::put(self::PATH_UPLOAD, $request->file('cover'));
         }
-        $currentCover = $model->cover;
-
         $model->update($data);
-        if($currentCover && Storage::exists($currentCover)){
-            Storage::delete($currentCover);
-        }
+
         return back();
     }
 
     /**
      * Remove the specified resource from storage.
-     */
+     */                
     public function destroy(string $id)
     {
         $model = Catalogue::query()->findOrFail($id);
 
         $model->delete();
-        if($model->cover && Storage::exists($model->cover)){
+        if ($model->cover && Storage::exists($model->cover)) {
             Storage::delete($model->cover);
         }
         return back();

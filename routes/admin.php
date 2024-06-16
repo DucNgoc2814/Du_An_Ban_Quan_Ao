@@ -2,14 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CatalogueController;
+use App\Http\Controllers\admin\ProductController;
 
 Route::prefix('admin')
     ->as('admin.')
     ->group(function () {
 
         Route::get('/', function () {
-            return 'Đây là trang dashboard';
-        });
+            return view('admin.dashboard');
+        })->name('dashboard');
 
         Route::prefix('catalogues')
             ->as('catalogues.')
@@ -23,4 +24,5 @@ Route::prefix('admin')
                 Route::get('{id}/destroy',      [CatalogueController::class, 'destroy'])->name('destroy');
 
             });
+            Route::resource('products', ProductController::class);
     });
